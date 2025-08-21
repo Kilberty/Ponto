@@ -1,5 +1,5 @@
 # Nome do fluxo de trabalho.
-name: Deploy na VPS
+name: Deploy
 
 # Define quando o fluxo de trabalho será executado.
 on:
