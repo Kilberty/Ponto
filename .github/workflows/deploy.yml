@@ -41,4 +41,4 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           VPS_PATH: ${{ secrets.VPS_PATH }} # Ex: /var/www/seu-projeto
         run: |
-          ssh ${SSH_USER}@${SSH_HOST} "cd ${VPS_PATH} && git pull origin main && npm install && npm run build"
+          ssh ${SSH_USER}@${SSH_HOST} "cd ${VPS_PATH} && git pull && npm install && npm run build"
