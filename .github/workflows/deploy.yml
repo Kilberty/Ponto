@@ -1,0 +1,44 @@
+# Nome do fluxo de trabalho.
+name: Deploy na VPS
+
+# Define quando o fluxo de trabalho será executado.
+on:
+  push:
+    branches:
+      - main # Execute este fluxo de trabalho quando houver um 'push' para o branch 'main'.
+  workflow_dispatch: # Permite que você execute o fluxo de trabalho manualmente.
+
+# O trabalho que será executado.
+jobs:
+  deploy:
+    # O executor para este trabalho.
+    runs-on: ubuntu-latest
+
+    steps:
+      # Passo 1: Checkout do código do repositório.
+      # Isso clona o seu repositório no ambiente do GitHub Actions.
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      # Passo 2: Configuração de variáveis de ambiente.
+      # Use segredos do GitHub para armazenar informações sensíveis (chave SSH, usuário, host).
+      - name: Configurar Chave SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      # Passo 3: Adicionar o host da VPS aos hosts conhecidos.
+      # Isso evita erros de conexão SSH.
+      - name: Adicionar Host Conhecido
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+          
+      # Passo 4: Conexão SSH e execução dos comandos.
+      - name: Conectar e Fazer Deploy
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          VPS_PATH: ${{ secrets.VPS_PATH }} # Ex: /var/www/seu-projeto
+        run: |
+          ssh ${SSH_USER}@${SSH_HOST} "cd ${VPS_PATH} && git pull origin main && npm install && npm run build"
