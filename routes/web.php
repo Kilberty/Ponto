@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
    Route::post('/funcoes/adicionar',[RoleController::class,'store']);
    Route::post('/funcoes/atualizar',[RoleController::class,'update']);
    Route::get('/funcoes',[RoleController::class,'index'])->name('funcoes');
-   Route::get('/obras',[ConstructionController::class,'index'])->name('obras');
+   Route::get('/build/obras',[ConstructionController::class,'index'])->name('obras');
    Route::post('/obras/add',[ConstructionController::class,'store']);
    Route::patch('/obras/{construction}/descricao',[ConstructionController::class,'description']);
    Route::get('/build/obras/{construction}/descricao',[ConstructionController::class,'show']);
