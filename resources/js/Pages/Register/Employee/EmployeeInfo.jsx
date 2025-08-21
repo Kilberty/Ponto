@@ -215,7 +215,7 @@ export default function EmployeeInfo () {
                                             ></TextInput>
                                         </div>
                                         <div className='hidden col-span-7 sm:block'></div>
-                                        <div className='col-span-2 md:col-span-1 '>
+                                        <div className='col-span-3 md:col-span-1 '>
                                             <InputLabel>UF RG</InputLabel>
                                             <Autocomplete
                                                 data={ufs}
@@ -225,7 +225,7 @@ export default function EmployeeInfo () {
                                                 }}
                                             />
                                         </div>
-                                        <div className='col-span-5 md:col-span-2 '>
+                                        <div className='col-span-4 md:col-span-2 '>
                                             <InputLabel>RG</InputLabel>
                                             <TextInput
                                                 className='w-full'
@@ -386,7 +386,7 @@ export default function EmployeeInfo () {
                                             />
                                         </div>
 
-                                        <div className='col-span-10 md:col-span-7'>
+                                        <div className='col-span-9 md:col-span-7'>
                                             <InputLabel>Municipio</InputLabel>
                                             <TextInput
                                                 className='w-full'
@@ -395,7 +395,7 @@ export default function EmployeeInfo () {
                                                 value={form.data.cidade}
                                             />
                                         </div>
-                                        <div className='col-span-2 md:col-span-1'>
+                                        <div className='col-span-3 md:col-span-1'>
                                             <InputLabel>UF</InputLabel>
                                             <Autocomplete
                                                 data={ufs}
