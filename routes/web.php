@@ -45,7 +45,7 @@ Route::middleware('auth')->group(function () {
    Route::get('/obras',[ConstructionController::class,'index'])->name('obras');
    Route::post('/obras/add',[ConstructionController::class,'store']);
    Route::patch('/obras/{construction}/descricao',[ConstructionController::class,'description']);
-   Route::get('/obras/{construction}/descricao',[ConstructionController::class,'show']);
+   Route::get('/build/obras/{construction}/descricao',[ConstructionController::class,'show']);
    Route::get('/build/obras/autocomplete',[ConstructionController::class,'autoCompleteConstruction']);
 });
 
