@@ -31,7 +31,7 @@ Route::get('/register',function(){
 
 Route::middleware('auth')->group(function () {
    Route::get('/empresa',[BusinessController::class,'index'])->name('empresa');
-   Route::get('/build/ufs',[UfController::class,'index'])->name('uf');
+   Route::get('/ufs',[UfController::class,'index'])->name('uf');
    Route::get('/funcionarios',[EmployeeController::class,'index'])->name('funcionarios');
    Route::post('/funcionarios/adicionar',[EmployeeController::class,'store']);
    Route::get('/funcionarios/gerarCodigo',[EmployeeController::class,'generate']);

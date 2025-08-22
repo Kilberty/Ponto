@@ -156,7 +156,7 @@ export default function AddConstruction({ children }) {
                         />
                     </div>
 
-                    <div className="col-span-9 md:col-span-7">
+                    <div className="col-span-9 md:col-span-6">
                         <InputLabel>Município</InputLabel>
                         <TextInput
                             className="w-full"
@@ -166,7 +166,7 @@ export default function AddConstruction({ children }) {
                         />
                     </div>
 
-                    <div className="col-span-3 md:col-span-1">
+                    <div className="col-span-3 md:col-span-2">
                         <InputLabel>UF</InputLabel>
                         <Autocomplete
                             data={ufs}
