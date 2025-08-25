@@ -118,7 +118,9 @@ export default function Individual () {
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead>Data</TableHead>
-                                            <TableHead>Entrada</TableHead>
+                                            <TableHead>Chegada</TableHead>
+                                            <TableHead>Almoço</TableHead>
+                                            <TableHead>Retorno</TableHead>
                                             <TableHead>Saída</TableHead>
                                         </TableRow>
                                     </TableHeader>
@@ -131,6 +133,15 @@ export default function Individual () {
                                                 <TableCell>
                                                     {row.entrada}
                                                 </TableCell>
+                                                <TableCell>
+                                                    {row.entrada}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {row.entrada}
+                                                </TableCell>
+                                               
+                                               
+                                               
                                                 <TableCell>
                                                     {row.saida}
                                                 </TableCell>
