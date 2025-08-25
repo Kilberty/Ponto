@@ -9,56 +9,49 @@ import {
     DialogTitle,
     DialogFooter
 } from '@/Components/ui/dialog'
+import { router } from '@inertiajs/react'
 import { DialogTrigger } from '@radix-ui/react-dialog'
 import { useEffect, useState } from 'react'
 
+export default function ConstructionSelector ({ children }) {
+    const [open, setOpen] = useState(false)
+    const [obras, setObras] = useState([])
+    const [id, setId] = useState(0)
 
-export default function ConstructionSelector({children}){
-    
-    const [open,setOpen] = useState(false)
-    const [obras,setObras] = useState([])
-    
-    useEffect(()=>{
-        api.get('/obras/autocomplete').then(res=>{
+    useEffect(() => {
+        api.get('/obras/autocomplete').then(res => {
             setObras(res.data)
         })
+    }, [])
 
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>{children}</DialogTrigger>
 
+            <DialogContent initialFocus={false}>
+                <DialogHeader>
+                    <DialogTitle>Ponto</DialogTitle>
+                    <DialogDescription>
+                        Escolha a obra para o ponto.
+                    </DialogDescription>
+                </DialogHeader>
 
+                <div className='w-full'>
+                    <Autocomplete
+                        data={obras}
+                        suppressAutoFocus={true}
+                        onChange={(value, item) => {
+                            setId(value)
+                        }}
+                    />
+                </div>
 
-
-
-    },[])
-    
-    
-    
-    return(
-       <Dialog open={open} onOpenChange={setOpen}>
-         <DialogTrigger asChild> 
-             {children}
-         </DialogTrigger>
-         
-         <DialogContent initialFocus = {false} >
-            <DialogHeader>
-                <DialogTitle>Ponto</DialogTitle>
-                <DialogDescription>Escolha a obra para o ponto.</DialogDescription>
-            </DialogHeader>
-      
-            <div className='w-full'>
-              <Autocomplete
-               data={obras}
-               suppressAutoFocus={true}
-              />
-            </div>
-         
-            <DialogFooter>
-                <PrimaryButton>Selecionar</PrimaryButton>
-            </DialogFooter>
-         
-         
-         
-         
-         </DialogContent>
-       </Dialog>
+                <DialogFooter>
+                    <a href={route('ponto', id)} target='_blank'>
+                        <PrimaryButton>Selecionar</PrimaryButton>
+                    </a>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     )
 }

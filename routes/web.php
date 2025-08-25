@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ConstructionController;
+use App\Http\Controllers\PontoController;
+
 use App\Http\Controllers\UfController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Foundation\Application;
@@ -47,6 +49,17 @@ Route::middleware('auth')->group(function () {
    Route::patch('/obras/{construction}/descricao',[ConstructionController::class,'description']);
    Route::get('/obras/{construction}/descricao',[ConstructionController::class,'show']);
    Route::get('/obras/autocomplete',[ConstructionController::class,'autoCompleteConstruction']);
+   Route::get('/ponto/{construction}',[PontoController::class,'index'])->name('ponto');
+   Route::post('/ponto/add',[PontoController::class,'store']);
+   Route::get('/relatorios',function(){
+    return Inertia::render('Reports/Main');
+   })->name('relatorios');
+   Route::get('/relatorios/ponto/individual',function(){
+    return Inertia::render('Reports/Ponto/Individual');
+   });
+   
+
+
 });
 
 require __DIR__.'/auth.php';
