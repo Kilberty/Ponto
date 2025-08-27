@@ -15,7 +15,8 @@ class Ponto extends Model
     "chegada",
     "almoco",
     "retorno",
-    "saida"
+    "saida",
+    "status"
   ];
 
 

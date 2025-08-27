@@ -10,11 +10,19 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'empresa_id' => 1, // Certifique-se de que já existe um business com ID 1
+        User::insert([
+        [
+            'empresa_id' => 1, 
             'name' => 'Kilberty',
             'email' => 'kilberty1995@gmail.com',
             'password' => Hash::make('1234'),
-        ]);
+        ],
+        [    
+            'empresa_id'=>2,
+            'name'=>'Teste Público',
+            'email'=>'teste@teste.com',
+            'password'=> Hash::make('1234') 
+        ]
+    ]);
     }
 }

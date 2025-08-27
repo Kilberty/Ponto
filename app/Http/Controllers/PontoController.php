@@ -43,7 +43,10 @@ class PontoController extends Controller
             "funcionario_id"=>$funcionario->id,
             "dia"=>$data,
             "empresa_id"=>$funcionario->empresa_id,
-            "obra_id"=>$dados["obra_id"]
+            "obra_id"=>$dados["obra_id"],
+        ],
+        [
+            "status"=>"Registrado"
         ]
        ); 
     
@@ -105,15 +108,6 @@ class PontoController extends Controller
 
 
 
-    public function report(Request $request){
-          $dados = $request->all();
-         
-
-
-
-
-
-    }
 
 
 

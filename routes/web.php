@@ -5,7 +5,7 @@ use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ConstructionController;
 use App\Http\Controllers\PontoController;
-
+use App\Http\Controllers\Reports;
 use App\Http\Controllers\UfController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Foundation\Application;
@@ -54,10 +54,9 @@ Route::middleware('auth')->group(function () {
    Route::get('/relatorios',function(){
     return Inertia::render('Reports/Main');
    })->name('relatorios');
-   Route::get('/relatorios/ponto/individual',function(){
-    return Inertia::render('Reports/Ponto/Individual');
-   });
-   
+   Route::get('/relatorios/ponto/individual',[Reports::class,'PontoIndividual']);
+   Route::get('/relatorios/ponto/individual/info',[Reports::class,'reportIndividual']);
+   Route::get('/relatorios/ponto/individual/pdf',[Reports::class,'pdfIndividual']);
 
 
 });

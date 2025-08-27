@@ -3,9 +3,9 @@ import InputLabel from '@/Components/InputLabel'
 import TextInput from '@/Components/TextInput'
 import PrimaryButton from '@/Components/PrimaryButton'
 import Autocomplete from '@/Components/Autocomplete'
-import { Head } from '@inertiajs/react'
+import { Head, usePage } from '@inertiajs/react'
 import { useState } from 'react'
-import { Download, FileText, Search } from 'lucide-react'
+import { Search, FileDown } from 'lucide-react'
 import {
     Table,
     TableBody,
@@ -14,12 +14,15 @@ import {
     TableHeader,
     TableRow
 } from '@/Components/ui/table'
+import api from '@/api'
 
 export default function Individual () {
+    const { funcionarios, inicio, fim } = usePage().props
+
     const [filters, setFilters] = useState({
-        funcionario: null,
-        inicio: '',
-        fim: ''
+        funcionario: '',
+        inicio: inicio,
+        fim: fim
     })
     const [showTable, setShowTable] = useState(false)
     const [results, setResults] = useState([])
@@ -30,11 +33,18 @@ export default function Individual () {
     }
 
     const pesquisar = async () => {
-        // Mock temporário
-        setResults([
-            { id: 1, data: '2025-08-20', entrada: '08:00', saida: '17:00' },
-            { id: 2, data: '2025-08-21', entrada: '09:00', saida: '18:00' }
-        ])
+        const query = new URLSearchParams({
+            id: filters.funcionario,
+            inicio: filters.inicio,
+            fim: filters.fim
+        })
+
+        const response = await api.get(
+            `/relatorios/ponto/individual/info?${query}`
+        )
+        const data = await response.data
+        console.log(data.pontos)
+        setResults(data.pontos)
         setShowTable(true)
     }
 
@@ -56,7 +66,7 @@ export default function Individual () {
                                 <InputLabel>Funcionário</InputLabel>
                                 <Autocomplete
                                     name='funcionario'
-                                    data={[]} // Preencher com lista real de funcionários
+                                    data={funcionarios} // Preencher com lista real
                                     value={filters.funcionario}
                                     onChange={value =>
                                         setFilters(prev => ({
@@ -67,7 +77,7 @@ export default function Individual () {
                                 />
                             </div>
                             <div className='col-span-6 md:col-span-3'>
-                                <InputLabel>Data de Início</InputLabel>
+                                <InputLabel>Início</InputLabel>
                                 <TextInput
                                     type='date'
                                     name='inicio'
@@ -77,7 +87,7 @@ export default function Individual () {
                                 />
                             </div>
                             <div className='col-span-6 md:col-span-3'>
-                                <InputLabel>Data de Fim</InputLabel>
+                                <InputLabel>Fim</InputLabel>
                                 <TextInput
                                     type='date'
                                     name='fim'
@@ -86,38 +96,70 @@ export default function Individual () {
                                     onChange={handleChange}
                                 />
                             </div>
-                            <div className='col-span-12 md:col-span-2 flex gap-2 '>
-                                <div className='w-[50%]'>
-                                    <PrimaryButton  className='w-full'  onClick={pesquisar}>
-                                        <div className='flex flex-row gap-2 justify-center items-center text-center' >
-                                             <div className='sm:[w-20%] min-w-auto' >
-                                                 <Search/> 
-                                             </div>
 
-                                             <div className='w-[80%] md:hidden'>
-                                               <span>Pesquisar</span>
-                                             </div>  
-                                       </div>
-                                        
-                                    </PrimaryButton>
-                                </div>
-                                 <div className='w-[50%]'>
-                                    <PrimaryButton className='w-full'  onClick={pesquisar}>
-                                        <Download />
-                                    </PrimaryButton>
-                                </div>
+                            {/* Botões */}
+                            <div className='col-span-12 md:col-span-2 flex gap-2 justify-end md:justify-start'>
+                                <PrimaryButton
+                                    onClick={pesquisar}
+                                    className='px-3 py-2 flex items-center'
+                                >
+                                    <Search />
+                                </PrimaryButton>
 
-                               
+                                <PrimaryButton
+                                    onClick={() => {
+                                        const query = new URLSearchParams({
+                                            id: filters.funcionario,
+                                            inicio: filters.inicio,
+                                            fim: filters.fim
+                                        }).toString()
+
+                                        window.open(
+                                            `/relatorios/ponto/individual/pdf?${query}`,
+                                            '_blank'
+                                        )
+                                    }}
+                                    className='px-3 py-2 flex items-center'
+                                >
+                                    <FileDown />
+                                </PrimaryButton>
+                            </div>
+                        </div>
+                        <div className='hidden md:flex justify-between mt-6 px-4 py-3 bg-gray-50 rounded-lg shadow-sm'>
+                            <div className='text-center'>
+                                <p className='text-sm font-medium text-gray-600'>
+                                    Horas Esperadas
+                                </p>
+                                <p className='text-lg font-semibold text-gray-800'>
+                                    160h
+                                </p>
+                            </div>
+                            <div className='text-center'>
+                                <p className='text-sm font-medium text-gray-600'>
+                                    Horas Trabalhadas
+                                </p>
+                                <p className='text-lg font-semibold text-gray-800'>
+                                    152h
+                                </p>
+                            </div>
+                            <div className='text-center'>
+                                <p className='text-sm font-medium text-gray-600'>
+                                    Saldo
+                                </p>
+                                <p className='text-lg font-semibold text-gray-800'>
+                                    -8h
+                                </p>
                             </div>
                         </div>
 
                         {/* Tabela */}
                         {showTable && (
-                            <div className='mt-6'>
+                            <div className='mt-6 overflow-x-auto'>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead>Data</TableHead>
+                                            <TableHead>Obra</TableHead>
                                             <TableHead>Chegada</TableHead>
                                             <TableHead>Almoço</TableHead>
                                             <TableHead>Retorno</TableHead>
@@ -125,25 +167,25 @@ export default function Individual () {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {results.map(row => (
-                                            <TableRow key={row.id}>
+                                        {results.map(ponto => (
+                                            <TableRow key={ponto.id}>
                                                 <TableCell>
-                                                    {row.data}
+                                                    {ponto.dia}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {row.entrada}
+                                                    {ponto.obra}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {row.entrada}
+                                                    {ponto.chegada}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {row.entrada}
+                                                    {ponto.almoco}
                                                 </TableCell>
-                                               
-                                               
-                                               
                                                 <TableCell>
-                                                    {row.saida}
+                                                    {ponto.retorno}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {ponto.saida}
                                                 </TableCell>
                                             </TableRow>
                                         ))}
