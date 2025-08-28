@@ -15,6 +15,7 @@ import {
     TableRow
 } from '@/Components/ui/table'
 import api from '@/api'
+import Pagination from '@/Components/Pagination'
 
 export default function Individual () {
     const { funcionarios, inicio, fim } = usePage().props
@@ -26,26 +27,36 @@ export default function Individual () {
     })
     const [showTable, setShowTable] = useState(false)
     const [results, setResults] = useState([])
+    const [links, setLinks] = useState([]) // links de paginação
 
     const handleChange = e => {
         const { name, value } = e.target
         setFilters(prev => ({ ...prev, [name]: value }))
     }
 
-    const pesquisar = async () => {
+    const fetchPontos = async (page = 1) => {
         const query = new URLSearchParams({
             id: filters.funcionario,
             inicio: filters.inicio,
-            fim: filters.fim
+            fim: filters.fim,
+            page
         })
 
         const response = await api.get(
             `/relatorios/ponto/individual/info?${query}`
         )
         const data = await response.data
-        console.log(data.pontos)
-        setResults(data.pontos)
+        setResults(data.pontos.data) // array de registros da página atual
+        setLinks(data.pontos.links) // links de paginação
         setShowTable(true)
+    }
+
+    const pesquisar = async () => {
+        fetchPontos()
+    }
+
+    const handlePageChange = (page) => {
+        fetchPontos(page)
     }
 
     return (
@@ -66,7 +77,7 @@ export default function Individual () {
                                 <InputLabel>Funcionário</InputLabel>
                                 <Autocomplete
                                     name='funcionario'
-                                    data={funcionarios} // Preencher com lista real
+                                    data={funcionarios}
                                     value={filters.funcionario}
                                     onChange={value =>
                                         setFilters(prev => ({
@@ -125,32 +136,6 @@ export default function Individual () {
                                 </PrimaryButton>
                             </div>
                         </div>
-                        <div className='hidden md:flex justify-between mt-6 px-4 py-3 bg-gray-50 rounded-lg shadow-sm'>
-                            <div className='text-center'>
-                                <p className='text-sm font-medium text-gray-600'>
-                                    Horas Esperadas
-                                </p>
-                                <p className='text-lg font-semibold text-gray-800'>
-                                    160h
-                                </p>
-                            </div>
-                            <div className='text-center'>
-                                <p className='text-sm font-medium text-gray-600'>
-                                    Horas Trabalhadas
-                                </p>
-                                <p className='text-lg font-semibold text-gray-800'>
-                                    152h
-                                </p>
-                            </div>
-                            <div className='text-center'>
-                                <p className='text-sm font-medium text-gray-600'>
-                                    Saldo
-                                </p>
-                                <p className='text-lg font-semibold text-gray-800'>
-                                    -8h
-                                </p>
-                            </div>
-                        </div>
 
                         {/* Tabela */}
                         {showTable && (
@@ -168,29 +153,20 @@ export default function Individual () {
                                     </TableHeader>
                                     <TableBody>
                                         {results.map(ponto => (
-                                            <TableRow key={ponto.id}>
-                                                <TableCell>
-                                                    {ponto.dia}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {ponto.obra}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {ponto.chegada}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {ponto.almoco}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {ponto.retorno}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {ponto.saida}
-                                                </TableCell>
+                                            <TableRow key={ponto.dia}>
+                                                <TableCell>{ponto.dia}</TableCell>
+                                                <TableCell>{ponto.obra}</TableCell>
+                                                <TableCell>{ponto.chegada}</TableCell>
+                                                <TableCell>{ponto.almoco}</TableCell>
+                                                <TableCell>{ponto.retorno}</TableCell>
+                                                <TableCell>{ponto.saida}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
                                 </Table>
+
+                                {/* Paginação */}
+                                <Pagination links={links} onPageChange={handlePageChange} />
                             </div>
                         )}
                     </div>
