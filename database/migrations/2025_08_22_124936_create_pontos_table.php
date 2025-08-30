@@ -21,7 +21,7 @@ return new class extends Migration
             $table->dateTime("almoco")->nullable();
             $table->dateTime("retorno")->nullable();
             $table->dateTime("saida")->nullable();
-            $table->enum('status',['Pendente','Registrado','Falta','Atestado','Feriado','Folga'])->default('Pendente');
+            $table->enum('status',['Pendente','Registrado','Falta','Atestado','Feriado','Folga','Férias'])->default('Pendente');
             $table->timestamps();
             $table->softDeletes();
         });
