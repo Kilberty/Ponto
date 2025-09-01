@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('construction_employee', function (Blueprint $table) {
          $table->id();
-         $table->foreignId('construcao_id')->constrained('constructions','id')->cascadeOnDelete();
-         $table->foreignId('funcionario_id')->constrained('employees','id')->cascadeOnDelete();
+         $table->foreignId('construcao_id')->constrained('constructions','id');
+         $table->foreignId('funcionario_id')->constrained('employees','id');
          $table->timestamps();
          $table->softDeletes();
         

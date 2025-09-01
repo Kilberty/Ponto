@@ -54,15 +54,18 @@
                     $totalDiarioMinutos = $ponto['minutos_trabalhados'] ?? 0;
                     $tempoAlmoco = $ponto['total_almoco'] ?? 0;
                     $saldoMinutos = $ponto['saldo'] ?? 0;
+                    $status = $ponto['status'] ?? 'Pendente';
+                    $repetirStatus = !in_array($status, ['Registrado','Pendente']) ? strtoupper($status) : '-';
+
                 @endphp
                 <tr>
                     <td>{{ $ponto['dia'] }}</td>
-                    <td style="text-align:center;" >{{ $ponto['obra'] ?? '-' }}</td>
-                    <td>{{ $ponto['chegada'] ?? '-' }}</td>
-                    <td>{{ $ponto['almoco'] ?? '-' }}</td>
-                    <td>{{ $ponto['retorno'] ?? '-' }}</td>
-                    <td>{{ $ponto['saida'] ?? '-' }}</td>
-                    <td>{{ $ponto['almoco_tempo'] ?? '-' }}</td>
+                    <td style="text-align:center;" >{{ $ponto['obra'] ?? $repetirStatus }}</td>
+                    <td>{{ $ponto['chegada'] ?? $repetirStatus }}</td>
+                    <td>{{ $ponto['almoco'] ?? $repetirStatus }}</td>
+                    <td>{{ $ponto['retorno'] ?? $repetirStatus }}</td>
+                    <td>{{ $ponto['saida'] ?? $repetirStatus }}</td>
+                    <td>{{ $ponto['almoco_tempo'] ?? $repetirStatus }}</td>
                     <td>{{$ponto['diario']}}</td>
                     <td>{{ $ponto['status'] ?? 'Pendente' }}</td>
                 </tr>

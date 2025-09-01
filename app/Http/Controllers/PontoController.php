@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 
 class PontoController extends Controller
@@ -20,7 +21,45 @@ class PontoController extends Controller
             "obra"=>$construction
         ]);
     }
+    
+    
+    public function autocompleteStatus(){
+        $enum_values = ['Atestado', 'Falta', 'Férias'];
+        $formatted_values = collect($enum_values)->map(function ($value) {
+        return [
+              'value' => $value,
+              'label' => ucwords(str_replace('_', ' ', $value))
+            ];
+        });
 
+      return response()->json($formatted_values);
+
+    }  
+    
+
+    public function ajustarPonto(Request $request){
+       $inicio = Carbon::createFromFormat('Y-m-d', $request->inicio)->startOfDay();
+       $fim    = Carbon::createFromFormat('Y-m-d', $request->fim)->endOfDay();
+       $periodo = CarbonPeriod::create($inicio, $fim);
+       $funcionario = Employee::findOrFail($request->funcionarioID);
+
+       foreach ($periodo as $data) {
+          Ponto::create([
+            'funcionario_id' => $request->funcionarioID,
+            'empresa_id'     => $funcionario->empresa_id,
+            'obra_id'        => $request->obraID,
+            'status'         => $request->valueStatus,
+            'dia'           => $data->format('Y-m-d'),
+          ]);
+        }
+
+        return response()->json(['message' => 'Pontos ajustados com sucesso']);
+
+
+    }
+
+
+    
     public function store(Request $request)
     {
        $dados = $request->all();

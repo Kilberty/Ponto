@@ -7,16 +7,30 @@ import { Head, router, useForm, usePage } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs'
 import PrimaryButton from '@/Components/PrimaryButton'
-import { ArrowLeft, Save, Search } from 'lucide-react'
+import { ArrowLeft, PlusCircle, Save, Search, Trash } from 'lucide-react'
 import mask from '@/mask'
 import { consultarCep } from '@/utils'
 import InputError from '@/Components/InputError'
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow
+} from '@/Components/ui/table'
+import DangerButton from '@/Components/DangerButton'
 
 export default function EmployeeInfo () {
-    const { funcionario } = usePage().props
+    const { funcionario, obras_funcionario } = usePage().props
     const [nomeFuncoes, setNomeFuncoes] = useState([])
     const [ufs, setUfs] = useState([])
+    const [obras, setObras] = useState([])
     const form = useForm({ ...funcionario })
+    const obrasForm = useForm({
+        funcionario_id: funcionario.id,
+        construcao_id: ''
+    })
     const [errors, setErrors] = useState({})
     const update = () => {
         const error = {}
@@ -42,7 +56,16 @@ export default function EmployeeInfo () {
         })
     }
 
-
+    const addConstruction = () => {
+        obrasForm.post('/obras/addFuncionario', {
+            onSuccess: () => {
+                alert('Obra Adicionada')
+            },
+            onError: error => {
+             alert(error.message)
+            }
+        })
+    }
 
     const handleChange = e => {
         const { name, value } = e.target
@@ -57,8 +80,14 @@ export default function EmployeeInfo () {
 
     useEffect(() => {
         setErrors({})
+        console.log(obras_funcionario)
+        
         api.get('/funcoes/autocomplete').then(res => {
             setNomeFuncoes(res.data)
+        })
+
+        api.get('/obras/autocomplete').then(res => {
+            setObras(res.data)
         })
 
         api.get('/ufs').then(res => {
@@ -74,9 +103,11 @@ export default function EmployeeInfo () {
                         Funcionário
                     </h2>
                     <div className='flex items-center gap-2'>
-                        <PrimaryButton onClick={()=>{
-                          router.visit('/funcionarios')
-                        }}>
+                        <PrimaryButton
+                            onClick={() => {
+                                router.visit('/funcionarios')
+                            }}
+                        >
                             <span className='sm:hidden'>
                                 <ArrowLeft />
                             </span>
@@ -184,7 +215,7 @@ export default function EmployeeInfo () {
                         </div>
                         <div className='mt-6'>
                             <Tabs defaultValue='pessoais' className='w-full'>
-                                <TabsList className='inline-flex w-full bg-gray-100 rounded-md p-1 overflow-hidden border border-gray-200'>
+                                <TabsList className='inline-flex w-full bg-gray-100 rounded-md p-1 overflow-hidden border border-gray-300 divide-x divide-gray-300'>
                                     <TabsTrigger
                                         value='pessoais'
                                         className={background}
@@ -196,6 +227,12 @@ export default function EmployeeInfo () {
                                         className={background}
                                     >
                                         Endereço
+                                    </TabsTrigger>
+                                    <TabsTrigger
+                                        value='obras'
+                                        className={background}
+                                    >
+                                        Obras
                                     </TabsTrigger>
                                 </TabsList>
                                 <TabsContent value='pessoais' className='mt-4 '>
@@ -345,11 +382,20 @@ export default function EmployeeInfo () {
                                                     )}
                                                 />
                                                 <PrimaryButton
-                                                    onClick={ async ()=>{
-                                                      const data = await consultarCep(form.data.cep,ufs)
-                                                      if(data){
-                                                        form.setData(prev=>({...prev,...data}))
-                                                      }
+                                                    onClick={async () => {
+                                                        const data =
+                                                            await consultarCep(
+                                                                form.data.cep,
+                                                                ufs
+                                                            )
+                                                        if (data) {
+                                                            form.setData(
+                                                                prev => ({
+                                                                    ...prev,
+                                                                    ...data
+                                                                })
+                                                            )
+                                                        }
                                                     }}
                                                     className='px-3 py-2'
                                                 >
@@ -425,6 +471,91 @@ export default function EmployeeInfo () {
                                                 name='numero'
                                                 value={funcionario.numero}
                                             />
+                                        </div>
+                                    </div>
+                                </TabsContent>
+
+                                <TabsContent value='obras' className='mt-4'>
+                                    <div className='grid grid-cols-12'>
+                                        <div className='col-span-12'>
+                                            <div className='flex flex-row items-center gap-2 w-[50%] md:w-[20%]'>
+                                                <div className='flex-1'>
+                                                    <InputLabel>
+                                                        Obra
+                                                    </InputLabel>
+                                                    <Autocomplete
+                                                        data={obras}
+                                                        value={
+                                                            obrasForm.data
+                                                                .construcao_id
+                                                        }
+                                                        onChange={(
+                                                            value,
+                                                            item
+                                                        ) => {
+                                                            console.log(value)
+                                                            obrasForm.setData(
+                                                                'construcao_id',
+                                                                value || null
+                                                            )
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <PrimaryButton
+                                                        onClick={
+                                                            addConstruction
+                                                        }
+                                                        className='mt-5'
+                                                    >
+                                                        <PlusCircle />
+                                                    </PrimaryButton>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className='col-span-12 mt-8'>
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow>
+                                                        <TableHead className='w-[10%]'>
+                                                            ID
+                                                        </TableHead>
+                                                        <TableHead className='w-[20%]'>
+                                                            Nome
+                                                        </TableHead>
+                                                        <TableHead className='hidden md:table-cell'>
+                                                            Descrição
+                                                        </TableHead>
+                                                        <TableHead className=' w-[2%] text-center'>
+                                                            Remover
+                                                        </TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {
+                                                        obras_funcionario.map(obra => (
+                                                        <TableRow key={obra.id}>
+                                                            <TableCell className='font-medium'>
+                                                                {obra.construction.id}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {obra.construction.nome}
+                                                            </TableCell>
+                                                            <TableCell className='hidden md:table-cell'>
+                                                                {obra.construction.descricao}
+                                                            </TableCell>
+                                                            
+                                                            
+                                                            <TableCell className='text-center'>
+                                                                <DangerButton>
+                                                                    <Trash />
+                                                                </DangerButton>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
                                         </div>
                                     </div>
                                 </TabsContent>

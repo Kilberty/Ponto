@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ConstructionController;
+use App\Http\Controllers\ConstructionEmployeeController;
 use App\Http\Controllers\PontoController;
 use App\Http\Controllers\Reports;
 use App\Http\Controllers\UfController;
@@ -37,6 +38,7 @@ Route::middleware('auth')->group(function () {
    Route::get('/funcionarios',[EmployeeController::class,'index'])->name('funcionarios');
    Route::post('/funcionarios/adicionar',[EmployeeController::class,'store']);
    Route::get('/funcionarios/gerarCodigo',[EmployeeController::class,'generate']);
+   Route::get('/funcionarios/autocomplete',[EmployeeController::class,'autocompleteFuncionarios']);
    Route::get('/funcionarios/{employee}',[EmployeeController::class,'show'])->name('funcionarios.show');
    Route::patch('/funcionarios/{employee}',[EmployeeController::class,'update']);
    Route::post('/empresa/update',[BusinessController::class,'update']);
@@ -45,12 +47,16 @@ Route::middleware('auth')->group(function () {
    Route::post('/funcoes/atualizar',[RoleController::class,'update']);
    Route::get('/funcoes',[RoleController::class,'index'])->name('funcoes');
    Route::get('/obras',[ConstructionController::class,'index'])->name('obras');
+   Route::post('/obras/addFuncionario',[ConstructionEmployeeController::class,'store']);
+   Route::get('/obras/getFuncionario',[ConstructionEmployeeController::class,'index']);
    Route::post('/obras/add',[ConstructionController::class,'store']);
    Route::patch('/obras/{construction}/descricao',[ConstructionController::class,'description']);
    Route::get('/obras/{construction}/descricao',[ConstructionController::class,'show']);
    Route::get('/obras/autocomplete',[ConstructionController::class,'autoCompleteConstruction']);
-   Route::get('/ponto/{construction}',[PontoController::class,'index'])->name('ponto');
    Route::post('/ponto/add',[PontoController::class,'store']);
+   Route::get('/ponto/autocomplete',[PontoController::class,'autocompleteStatus']);
+   Route::post('/ponto/ajuste',[PontoController::class,'ajustarPonto']);
+   Route::get('/ponto/{construction}',[PontoController::class,'index'])->name('ponto');
    Route::get('/relatorios',function(){
     return Inertia::render('Reports/Main');
    })->name('relatorios');

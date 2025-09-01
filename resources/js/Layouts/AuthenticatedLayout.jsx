@@ -4,6 +4,7 @@ import FakeNavLink from '@/Components/FakeNavLink'
 import NavLink from '@/Components/NavLink'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink'
 import ConstructionSelector from '@/Pages/Ponto/ConstructionSelector'
+import Fix from '@/Pages/Ponto/Fix'
 import { Link, usePage } from '@inertiajs/react'
 import { useState } from 'react'
 
@@ -242,9 +243,9 @@ export default function AuthenticatedLayout({ header, children }) {
                         </ResponsiveNavLink>
                         {openPonto && (
                             <div className="sm:hidden bg-white px-4 py-2 space-y-1">
-                                <ResponsiveNavLink href="#">
-                                    Ajustar ponto
-                                </ResponsiveNavLink>
+                                <Fix>
+                                    <FakeNavLink>Ajustar ponto</FakeNavLink>
+                                </Fix>
                             </div>
                         )}
 
@@ -291,7 +292,9 @@ export default function AuthenticatedLayout({ header, children }) {
                         <ConstructionSelector>
                             <FakeNavLink>Selecionar obra</FakeNavLink>
                         </ConstructionSelector>
-                        <NavLink href="#">Ajustar ponto</NavLink>
+                        <Fix>
+                            <FakeNavLink>Ajustar ponto</FakeNavLink>
+                        </Fix>
                     </div>
                 </div>
             )}

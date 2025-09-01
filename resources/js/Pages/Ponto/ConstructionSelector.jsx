@@ -9,7 +9,6 @@ import {
     DialogTitle,
     DialogFooter
 } from '@/Components/ui/dialog'
-import { router } from '@inertiajs/react'
 import { DialogTrigger } from '@radix-ui/react-dialog'
 import { useEffect, useState } from 'react'
 
