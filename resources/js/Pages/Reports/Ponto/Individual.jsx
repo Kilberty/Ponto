@@ -16,6 +16,7 @@ import {
 } from '@/Components/ui/table'
 import api from '@/api'
 import Pagination from '@/Components/Pagination'
+import InputError from '@/Components/InputError'
 
 export default function Individual () {
     const { funcionarios, inicio, fim } = usePage().props
@@ -25,13 +26,25 @@ export default function Individual () {
         inicio: inicio,
         fim: fim
     })
+    const [errors, setErrors] = useState({})
     const [showTable, setShowTable] = useState(false)
     const [results, setResults] = useState([])
-    const [links, setLinks] = useState([]) // links de paginação
+    const [links, setLinks] = useState([])
+    const [pdf, setPDF] = useState(false)
 
     const handleChange = e => {
         const { name, value } = e.target
         setFilters(prev => ({ ...prev, [name]: value }))
+    }
+
+    const fetchPDF = async () => {
+        const query = new URLSearchParams({
+            id: filters.funcionario,
+            inicio: filters.inicio,
+            fim: filters.fim
+        }).toString()
+
+        window.open(`/relatorios/ponto/individual/pdf?${query}`, '_blank')
     }
 
     const fetchPontos = async (page = 1) => {
@@ -42,20 +55,46 @@ export default function Individual () {
             page
         })
 
-        const response = await api.get(
-            `/relatorios/ponto/individual/info?${query}`
-        )
-        const data = await response.data
-        setResults(data.pontos.data) // array de registros da página atual
-        setLinks(data.pontos.links) // links de paginação
-        setShowTable(true)
+        try {
+            const response = await api.get(
+                `/relatorios/ponto/individual/info?${query}`
+            )
+            const data = await response.data
+            setResults(data.pontos.data)
+            setLinks(data.pontos.links)
+            setShowTable(true)
+            setErrors({})
+        } catch (err) {
+            console.error(err)
+        }
     }
 
     const pesquisar = async () => {
+        const error = {}
+
+        if (!Number.isInteger(filters.funcionario)) {
+            error.funcionario = 'Selecione um funcionário válido'
+        }
+        if (!filters.inicio) {
+            error.inicio = 'Insira uma data válida.'
+        }
+        if (!filters.fim) {
+            error.fim = 'Insira uma data válida.'
+        }
+        if (filters.inicio && filters.fim && filters.inicio > filters.fim) {
+            error.data = 'Período inválido'
+        }
+
+        if (Object.keys(error).length > 0) {
+            setErrors(error)
+            return
+        }
+
+        setPDF(true)
         fetchPontos()
     }
 
-    const handlePageChange = (page) => {
+    const handlePageChange = page => {
         fetchPontos(page)
     }
 
@@ -71,9 +110,9 @@ export default function Individual () {
             <div className='py-12'>
                 <div className='mx-auto max-w-7xl sm:px-6 lg:px-8'>
                     <div className='bg-white shadow-sm sm:rounded-lg p-6'>
-                        {/* Formulário de pesquisa */}
-                        <div className='grid grid-cols-12 gap-4 items-end'>
-                            <div className='col-span-12 md:col-span-4'>
+                        <div className='grid grid-cols-12 gap-4 mb-4 items-end'>
+                            {/* Funcionário */}
+                            <div className='col-span-12 md:col-span-4 relative'>
                                 <InputLabel>Funcionário</InputLabel>
                                 <Autocomplete
                                     name='funcionario'
@@ -86,8 +125,14 @@ export default function Individual () {
                                         }))
                                     }
                                 />
+                                <InputError
+                                    message={errors.funcionario}
+                                    className='absolute mt-1 mb-2'
+                                />
                             </div>
-                            <div className='col-span-6 md:col-span-3'>
+
+                            {/* Início */}
+                            <div className='col-span-6 md:col-span-3 relative'>
                                 <InputLabel>Início</InputLabel>
                                 <TextInput
                                     type='date'
@@ -96,8 +141,14 @@ export default function Individual () {
                                     value={filters.inicio}
                                     onChange={handleChange}
                                 />
+                                <InputError
+                                    message={errors.inicio || errors.data}
+                                    className='absolute mt-1 mb-2'
+                                />
                             </div>
-                            <div className='col-span-6 md:col-span-3'>
+
+                            {/* Fim */}
+                            <div className='col-span-6 md:col-span-3 relative'>
                                 <InputLabel>Fim</InputLabel>
                                 <TextInput
                                     type='date'
@@ -105,6 +156,10 @@ export default function Individual () {
                                     className='w-full'
                                     value={filters.fim}
                                     onChange={handleChange}
+                                />
+                                <InputError
+                                    message={errors.fim || errors.data}
+                                    className='absolute mt-1 mb-2'
                                 />
                             </div>
 
@@ -116,24 +171,14 @@ export default function Individual () {
                                 >
                                     <Search />
                                 </PrimaryButton>
-
-                                <PrimaryButton
-                                    onClick={() => {
-                                        const query = new URLSearchParams({
-                                            id: filters.funcionario,
-                                            inicio: filters.inicio,
-                                            fim: filters.fim
-                                        }).toString()
-
-                                        window.open(
-                                            `/relatorios/ponto/individual/pdf?${query}`,
-                                            '_blank'
-                                        )
-                                    }}
-                                    className='px-3 py-2 flex items-center'
-                                >
-                                    <FileDown />
-                                </PrimaryButton>
+                                {pdf && (
+                                    <PrimaryButton
+                                        onClick={fetchPDF}
+                                        className='px-3 py-2 flex items-center'
+                                    >
+                                        <FileDown />
+                                    </PrimaryButton>
+                                )}
                             </div>
                         </div>
 
@@ -154,19 +199,33 @@ export default function Individual () {
                                     <TableBody>
                                         {results.map(ponto => (
                                             <TableRow key={ponto.dia}>
-                                                <TableCell>{ponto.dia}</TableCell>
-                                                <TableCell>{ponto.obra}</TableCell>
-                                                <TableCell>{ponto.chegada}</TableCell>
-                                                <TableCell>{ponto.almoco}</TableCell>
-                                                <TableCell>{ponto.retorno}</TableCell>
-                                                <TableCell>{ponto.saida}</TableCell>
+                                                <TableCell>
+                                                    {ponto.dia}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {ponto.obra}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {ponto.chegada ?? ponto.status}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {ponto.almoco ?? ponto.status}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {ponto.retorno ?? ponto.status}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {ponto.saida ?? ponto.status}
+                                                </TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
                                 </Table>
 
-                                {/* Paginação */}
-                                <Pagination links={links} onPageChange={handlePageChange} />
+                                <Pagination
+                                    links={links}
+                                    onPageChange={handlePageChange}
+                                />
                             </div>
                         )}
                     </div>

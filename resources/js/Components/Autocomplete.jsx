@@ -36,9 +36,7 @@ export default function Autocomplete({
         const result = forceShowAll
             ? data
             : data.filter(item =>
-                  item.label
-                      .toLowerCase()
-                      .includes(inputValue.toLowerCase())
+                  item.label.toLowerCase().includes(inputValue.toLowerCase())
               )
         setFilteredOptions(result)
     }, [inputValue, data, forceShowAll])
@@ -49,6 +47,7 @@ export default function Autocomplete({
             if (e.key === 'Escape') {
                 setOpen(false)
                 setForceShowAll(false)
+                setHighlightedIndex(-1)
             }
         }
 
@@ -56,6 +55,7 @@ export default function Autocomplete({
             if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
                 setOpen(false)
                 setForceShowAll(false)
+                setHighlightedIndex(-1)
             }
         }
 
@@ -81,7 +81,6 @@ export default function Autocomplete({
     // Reset suprimir foco após abrir
     useEffect(() => {
         if (suppressAutoFocus) {
-            // Após o primeiro render, reabilita o foco normalmente
             setTimeout(() => {
                 suppressFocusRef.current = false
             }, 200)
@@ -111,6 +110,12 @@ export default function Autocomplete({
                 selectOption(selected)
             }
         }
+
+        if (e.key === 'Tab') {
+            setOpen(false)
+            setForceShowAll(false)
+            setHighlightedIndex(-1)
+        }
     }
 
     const selectOption = item => {
@@ -129,6 +134,7 @@ export default function Autocomplete({
         }
         setOpen(true)
         setHighlightedIndex(0)
+        inputRef.current?.focus()
     }
 
     return (
@@ -141,24 +147,34 @@ export default function Autocomplete({
                     value={inputValue}
                     onChange={e => {
                         const raw = e.target.value
+                        const lowerRaw = raw.toLowerCase()
                         setInputValue(raw)
                         setForceShowAll(false)
                         setOpen(true)
                         setHighlightedIndex(0)
+
+                        // Apenas filtra, não seleciona automaticamente
+                        const matches = data.filter(item =>
+                            item.label.toLowerCase().includes(lowerRaw)
+                        )
+
                         onChange?.(raw, null)
                     }}
                     onFocus={() => {
                         if (suppressFocusRef.current) return
-
-                        if (inputValue === '') {
-                            setForceShowAll(true)
-                        }
+                        if (inputValue === '') setForceShowAll(true)
                         setOpen(true)
+                    }}
+                    onBlur={e => {
+                        if (!wrapperRef.current.contains(e.relatedTarget)) {
+                            setOpen(false)
+                            setForceShowAll(false)
+                            setHighlightedIndex(-1)
+                        }
                     }}
                     onKeyDown={handleInputKeyDown}
                 />
 
-                {/* Seta dentro do input */}
                 <button
                     type='button'
                     className='absolute inset-y-0 right-2 flex items-center justify-center text-gray-400 hover:text-gray-600'
@@ -179,6 +195,7 @@ export default function Autocomplete({
                                     key={item.value}
                                     value={item.value}
                                     onSelect={() => selectOption(item)}
+                                    tabIndex={0}
                                     className={cn(
                                         'cursor-pointer',
                                         index === highlightedIndex &&

@@ -62,6 +62,12 @@ export default function AddConstruction({ children }) {
         form.post('/obras/add',{
             onSuccess:()=>{
               setOpen(false)
+              window.Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Obra adicionada!',
+                    icon: 'success',
+                    confirmButtonText: 'Ok'
+                })
             }
         })
     

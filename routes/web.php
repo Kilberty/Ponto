@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
    Route::post('/funcoes/atualizar',[RoleController::class,'update']);
    Route::get('/funcoes',[RoleController::class,'index'])->name('funcoes');
    Route::get('/obras',[ConstructionController::class,'index'])->name('obras');
+   Route::delete('/obras/deleteFuncionario/{constructionEmployee}',[ConstructionEmployeeController::class,'delete'])->name('funcionario.delete');
    Route::post('/obras/addFuncionario',[ConstructionEmployeeController::class,'store']);
    Route::get('/obras/getFuncionario',[ConstructionEmployeeController::class,'index']);
    Route::post('/obras/add',[ConstructionController::class,'store']);

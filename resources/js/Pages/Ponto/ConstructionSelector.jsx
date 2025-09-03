@@ -1,6 +1,6 @@
-import api from '@/api'
-import Autocomplete from '@/Components/Autocomplete'
-import PrimaryButton from '@/Components/PrimaryButton'
+import api from '@/api';
+import Autocomplete from '@/Components/Autocomplete';
+import PrimaryButton from '@/Components/PrimaryButton';
 import {
     Dialog,
     DialogContent,
@@ -8,23 +8,25 @@ import {
     DialogHeader,
     DialogTitle,
     DialogFooter
-} from '@/Components/ui/dialog'
-import { DialogTrigger } from '@radix-ui/react-dialog'
-import { useEffect, useState } from 'react'
+} from '@/Components/ui/dialog';
+import { DialogTrigger } from '@radix-ui/react-dialog';
+import { useEffect, useState } from 'react';
 
-export default function ConstructionSelector ({ children }) {
-    const [open, setOpen] = useState(false)
-    const [obras, setObras] = useState([])
-    const [id, setId] = useState(0)
+export default function ConstructionSelector({ children }) {
+    const [open, setOpen] = useState(false);
+    const [obras, setObras] = useState([]);
+    const [id, setId] = useState(0);
 
     useEffect(() => {
         api.get('/obras/autocomplete').then(res => {
-            setObras(res.data)
-        })
-    }, [])
+            setObras(res.data);
+        });
+    }, []);
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={(open) => {
+            setOpen(open); // A correção está aqui
+        }}>
             <DialogTrigger asChild>{children}</DialogTrigger>
 
             <DialogContent initialFocus={false}>
@@ -40,17 +42,21 @@ export default function ConstructionSelector ({ children }) {
                         data={obras}
                         suppressAutoFocus={true}
                         onChange={(value, item) => {
-                            setId(value)
+                            setId(value);
                         }}
                     />
                 </div>
 
                 <DialogFooter>
                     <a href={route('ponto', id)} target='_blank'>
-                        <PrimaryButton>Selecionar</PrimaryButton>
+                        <PrimaryButton
+                            onClick={() => {
+                                setOpen(false);
+                            }}
+                        >Selecionar</PrimaryButton>
                     </a>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-    )
+    );
 }

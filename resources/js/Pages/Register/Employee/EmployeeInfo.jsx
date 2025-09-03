@@ -23,6 +23,7 @@ import DangerButton from '@/Components/DangerButton'
 
 export default function EmployeeInfo () {
     const { funcionario, obras_funcionario } = usePage().props
+    const [tab, setTab] = useState('pessoais')
     const [nomeFuncoes, setNomeFuncoes] = useState([])
     const [ufs, setUfs] = useState([])
     const [obras, setObras] = useState([])
@@ -48,7 +49,12 @@ export default function EmployeeInfo () {
 
         form.patch(`/funcionarios/${funcionario.id}`, {
             onSuccess: () => {
-                alert('Dados atualizados com sucesso!')
+                window.Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Dados atualizados!',
+                    icon: 'success',
+                    confirmButtonText: 'Ok'
+                })
             },
             onError: error => {
                 console.log(error)
@@ -59,10 +65,50 @@ export default function EmployeeInfo () {
     const addConstruction = () => {
         obrasForm.post('/obras/addFuncionario', {
             onSuccess: () => {
-                alert('Obra Adicionada')
+                window.Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Obra adicionada.',
+                    icon: 'success',
+                    confirmButtonText: 'Ok'
+                })
             },
             onError: error => {
-             alert(error.message)
+                alert(error.message)
+            }
+        })
+    }
+
+    const removeConstruction = async id => {
+        window.Swal.fire({
+            title: 'Remover obra do funcionário?',
+            text: 'Essa ação irá desvincular a obra selecionada deste funcionário. Deseja continuar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sim, remover',
+            cancelButtonText: 'Cancelar'
+        }).then(async result => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await api.delete(
+                        `/obras/deleteFuncionario/${id}`
+                    )
+                    if (response.status === 200) {
+                        window.Swal.fire(
+                            'Removida!',
+                            'A obra foi desvinculada do funcionário com sucesso.',
+                            'success'
+                        )
+                       router.reload({only:['obras_funcionario']})
+                    }
+                } catch (error) {
+                    window.Swal.fire(
+                        'Erro!',
+                        'Não foi possível desvincular a obra do funcionário.',
+                        'error'
+                    )
+                }
             }
         })
     }
@@ -81,7 +127,7 @@ export default function EmployeeInfo () {
     useEffect(() => {
         setErrors({})
         console.log(obras_funcionario)
-        
+
         api.get('/funcoes/autocomplete').then(res => {
             setNomeFuncoes(res.data)
         })
@@ -214,7 +260,11 @@ export default function EmployeeInfo () {
                             </div>
                         </div>
                         <div className='mt-6'>
-                            <Tabs defaultValue='pessoais' className='w-full'>
+                            <Tabs
+                                value={tab}
+                                onValueChange={setTab}
+                                className='w-full'
+                            >
                                 <TabsList className='inline-flex w-full bg-gray-100 rounded-md p-1 overflow-hidden border border-gray-300 divide-x divide-gray-300'>
                                     <TabsTrigger
                                         value='pessoais'
@@ -533,27 +583,47 @@ export default function EmployeeInfo () {
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
-                                                    {
-                                                        obras_funcionario.map(obra => (
-                                                        <TableRow key={obra.id}>
-                                                            <TableCell className='font-medium'>
-                                                                {obra.construction.id}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                {obra.construction.nome}
-                                                            </TableCell>
-                                                            <TableCell className='hidden md:table-cell'>
-                                                                {obra.construction.descricao}
-                                                            </TableCell>
-                                                            
-                                                            
-                                                            <TableCell className='text-center'>
-                                                                <DangerButton>
-                                                                    <Trash />
-                                                                </DangerButton>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ))}
+                                                    {obras_funcionario.map(
+                                                        obra => (
+                                                            <TableRow
+                                                                key={obra.id}
+                                                            >
+                                                                <TableCell className='font-medium'>
+                                                                    {
+                                                                        obra
+                                                                            .construction
+                                                                            .id
+                                                                    }
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    {
+                                                                        obra
+                                                                            .construction
+                                                                            .nome
+                                                                    }
+                                                                </TableCell>
+                                                                <TableCell className='hidden md:table-cell'>
+                                                                    {
+                                                                        obra
+                                                                            .construction
+                                                                            .descricao
+                                                                    }
+                                                                </TableCell>
+
+                                                                <TableCell className='text-center'>
+                                                                    <DangerButton
+                                                                        onClick={() => {
+                                                                            removeConstruction(
+                                                                                obra.id
+                                                                            )
+                                                                        }}
+                                                                    >
+                                                                        <Trash />
+                                                                    </DangerButton>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )
+                                                    )}
                                                 </TableBody>
                                             </Table>
                                         </div>

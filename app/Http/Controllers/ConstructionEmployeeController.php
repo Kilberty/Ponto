@@ -49,8 +49,10 @@ class ConstructionEmployeeController extends Controller
     }
 
  
-    public function destroy(ConstructionEmployee $constructionEmployee)
+    public function delete(ConstructionEmployee $constructionEmployee)
     {
-        //
+      $funcionario = $constructionEmployee->funcionario_id; 
+      $constructionEmployee->delete();
+      return response()->json(['message'=>'Obra deletada']);
     }
 }

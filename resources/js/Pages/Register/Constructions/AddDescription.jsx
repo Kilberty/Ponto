@@ -38,6 +38,12 @@ export default function AddDescription({children,id}){
         form.patch(`/obras/${id}/descricao`,{
             onSuccess:()=>{
                 setOpen(false)
+                window.Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Descrição atualizada!',
+                    icon: 'success',
+                    confirmButtonText: 'Ok'
+                })
             }
         })
     }

@@ -81,14 +81,13 @@ private function getPontosFormatados($funcionarioId, $inicio, $fim, $perPage)
         if (in_array($nomeDia, $diasAtivos)) {
             $pontoDoDia = $pontos->get($diaEsperado->format('Y-m-d'))?->first();
             // Apenas incrementa se não for um dia com status de atestado ou férias.
-            if (!$pontoDoDia || !in_array($pontoDoDia->status, ['Atestado', 'Férias'])) {
-                $diasEsperados++;
+            if (!$pontoDoDia || !in_array($pontoDoDia->status, ['Atestado','Férias'])) {
+               $diasEsperados++;
             }
         }
     }
 
     $totalMinutosTrabalhados = 0;
-
     // Loop principal para calcular os totais e formatar os dias
     $periodo = $inicioDate->daysUntil($fimDate->copy());
     foreach ($periodo as $dia) {

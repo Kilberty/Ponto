@@ -48,6 +48,12 @@ export default function EmployeeList () {
         router.post('/funcionarios/adicionar', payload, {
             onSuccess: () => {
                 setShowModal(false)
+                window.Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Funcionário Adicionado!',
+                    icon: 'success',
+                    confirmButtonText: 'Ok'
+                })
                 setNome('')
                 setCodigo('')
             }
@@ -190,9 +196,11 @@ export default function EmployeeList () {
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent side='right'>
                                                         <DropdownMenuItem
-                                                        onClick={()=>{
-                                                            router.get(`/funcionarios/${funcionario.id}`)
-                                                        }}
+                                                            onClick={() => {
+                                                                router.get(
+                                                                    `/funcionarios/${funcionario.id}`
+                                                                )
+                                                            }}
                                                         >
                                                             Editar
                                                         </DropdownMenuItem>

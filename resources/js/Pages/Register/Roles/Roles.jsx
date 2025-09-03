@@ -96,6 +96,14 @@ export default function Roles () {
             router.post('/funcoes/adicionar', payload, {
                 onSuccess: () => {
                     setShowModal(false)
+                    window.Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Função adicionada!',
+                    icon: 'success',
+                    confirmButtonText: 'Ok'
+                })
+                    
+                    
                     setNome('')
                     setHoras('')
                     setDiasSemana(diasPadrao)
