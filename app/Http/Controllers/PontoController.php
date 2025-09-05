@@ -71,6 +71,7 @@ class PontoController extends Controller
         
         if($ponto->status != 'Registrado'){
             return response()->json([
+                'id'=>$ponto->id,
                 'status'=> $ponto->status,
                 'chegada'=>"",
                 'almoco'=>"",
@@ -84,6 +85,7 @@ class PontoController extends Controller
         
         if ($ponto->status === 'Registrado') {
            return response()->json([
+            'id'=>$ponto->id,
             'status'=> $ponto->status,
             'chegada'=>$ponto->chegada ? Carbon::parse($ponto->chegada)->format('H:i:s') : null,
             'almoco'=>$ponto->almoco ? Carbon::parse($ponto->almoco)->format('H:i:s') : null,
@@ -95,6 +97,26 @@ class PontoController extends Controller
         
     } 
     
+
+    public function updateHorario(Request $request,Ponto $ponto){
+        $payload = [
+            "chegada"=>Carbon::createFromFormat('Y-m-d H:i:s',"$request->data $request->chegada"),
+            "almoco"=>Carbon::createFromFormat('Y-m-d H:i:s',"$request->data $request->almoco"),
+            "retorno"=>Carbon::createFromFormat('Y-m-d H:i:s',"$request->data $request->retorno"),
+            "saida"=>Carbon::createFromFormat('Y-m-d H:i:s',"$request->data $request->saida")
+        ];       
+        $ponto->update($payload);
+        return response()->json(["message"=>"Horário atualizado com sucesso!"]);
+
+    }
+
+
+
+
+
+
+
+
     public function store(Request $request)
     {
        $dados = $request->all();
