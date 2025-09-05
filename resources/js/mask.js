@@ -36,6 +36,16 @@ const mask = {
       .replace(/(\d{2})(\d)/, '$1/$2');
   },
 
+  
+  hora(value = '') {
+    return String(value)
+    .replace(/\D/g, '')               
+    .replace(/^(\d{2})(\d)/, '$1:$2') 
+    .replace(/^(\d{2}:\d{2})(\d)/, '$1:$2') 
+    .slice(0, 8);                     
+  },
+  
+  
   unmask(value) {
     return String(value)
       .replace(/\D/g, '')

@@ -1,5 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { Head, Link } from '@inertiajs/react'
+import Construction from './Ponto/Construction'
 
 export default function Main () {
     return (
@@ -33,23 +34,17 @@ export default function Main () {
                                                 Ponto Individual
                                             </Link>
                                         </li>
-                                        <li className='flex items-center'>
-                                            <span className='mr-2 h-1.5 w-1.5 rounded-full bg-gray-500'></span>
-                                            <Link
-                                                href='/relatorios/ponto/mensal'
-                                                className='block rounded px-2 py-1 text-sm text-gray-800 hover:bg-gray-100 hover:text-black'
-                                            >
-                                                Ponto por Obra
-                                            </Link>
-                                        </li>
-                                        
+                                        <Construction>
+                                            <li className='flex items-center cursor-pointer'>
+                                                <span className='mr-2 h-1.5 w-1.5 rounded-full bg-gray-500'></span>
+                                                <span className='block rounded px-2 py-1 text-sm text-gray-800 hover:bg-gray-100 hover:text-black'>
+                                                    Ponto por Obra
+                                                </span>
+                                            </li>
+                                        </Construction>
                                     </ul>
                                 </div>
                             </div>
-
-                        
-
-                       
                         </div>
                     </div>
                 </div>

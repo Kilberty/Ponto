@@ -24,7 +24,7 @@ class PontoController extends Controller
     
     
     public function autocompleteStatus(){
-        $enum_values = ['Atestado', 'Falta', 'Férias'];
+        $enum_values = ['Atestado', 'Falta', 'Férias','Horário'];
         $formatted_values = collect($enum_values)->map(function ($value) {
         return [
               'value' => $value,
@@ -54,11 +54,46 @@ class PontoController extends Controller
         }
 
         return response()->json(['message' => 'Pontos ajustados com sucesso']);
-
-
     }
 
-
+    public function buscarHorario(Request $request){
+        
+        $ponto = Ponto::where('dia',$request->data)
+                      ->where('funcionario_id',$request->funcionario)
+                      ->first();
+        
+        
+        if(!$ponto){
+            return response()->json([
+                'message'=>'Não foi encontrado ponto registrado para esse dia'
+            ],204);
+        }
+        
+        if($ponto->status != 'Registrado'){
+            return response()->json([
+                'status'=> $ponto->status,
+                'chegada'=>"",
+                'almoco'=>"",
+                'retorno'=>"",
+                'saida'=>"",
+            ],203);
+        }
+        
+        
+        
+        
+        if ($ponto->status === 'Registrado') {
+           return response()->json([
+            'status'=> $ponto->status,
+            'chegada'=>$ponto->chegada ? Carbon::parse($ponto->chegada)->format('H:i:s') : null,
+            'almoco'=>$ponto->almoco ? Carbon::parse($ponto->almoco)->format('H:i:s') : null,
+            'retorno'=>$ponto->retorno ? Carbon::parse($ponto->retorno)->format('H:i:s') : null,
+            'saida'=>$ponto->saida ? Carbon::parse($ponto->saida)->format('H:i:s') : null
+           ],200);  
+         
+        }
+        
+    } 
     
     public function store(Request $request)
     {

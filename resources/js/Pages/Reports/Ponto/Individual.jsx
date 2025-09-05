@@ -81,9 +81,10 @@ export default function Individual () {
         if (!filters.fim) {
             error.fim = 'Insira uma data válida.'
         }
-        if (filters.inicio && filters.fim && filters.inicio > filters.fim) {
+        if (filters.inicio > filters.fim) {
             error.data = 'Período inválido'
         }
+
 
         if (Object.keys(error).length > 0) {
             setErrors(error)

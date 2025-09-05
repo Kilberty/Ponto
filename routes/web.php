@@ -28,10 +28,6 @@ Route::get('/register',function(){
     return Inertia::render('Auth/Register',[]);
 });
 
-
-
-
-
 Route::middleware('auth')->group(function () {
    Route::get('/empresa',[BusinessController::class,'index'])->name('empresa');
    Route::get('/ufs',[UfController::class,'index'])->name('uf');
@@ -55,15 +51,19 @@ Route::middleware('auth')->group(function () {
    Route::get('/obras/{construction}/descricao',[ConstructionController::class,'show']);
    Route::get('/obras/autocomplete',[ConstructionController::class,'autoCompleteConstruction']);
    Route::post('/ponto/add',[PontoController::class,'store']);
+   Route::get('/ponto/getHorario',[PontoController::class,'buscarHorario']);
    Route::get('/ponto/autocomplete',[PontoController::class,'autocompleteStatus']);
    Route::post('/ponto/ajuste',[PontoController::class,'ajustarPonto']);
    Route::get('/ponto/{construction}',[PontoController::class,'index'])->name('ponto');
+   Route::get('/relatorios/ponto/individual',[Reports::class,'PontoIndividual']);
+   Route::get('/relatorios/ponto/obra/pdf',[Reports::class,'pdfObra']);
+   Route::get('/relatorios/ponto/individual/info',[Reports::class,'reportIndividual']);
+   Route::get('/relatorios/ponto/individual/pdf',[Reports::class,'pdfIndividual']);
+   
    Route::get('/relatorios',function(){
     return Inertia::render('Reports/Main');
    })->name('relatorios');
-   Route::get('/relatorios/ponto/individual',[Reports::class,'PontoIndividual']);
-   Route::get('/relatorios/ponto/individual/info',[Reports::class,'reportIndividual']);
-   Route::get('/relatorios/ponto/individual/pdf',[Reports::class,'pdfIndividual']);
+
 
 
 });
