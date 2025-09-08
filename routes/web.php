@@ -7,6 +7,7 @@ use App\Http\Controllers\ConstructionController;
 use App\Http\Controllers\ConstructionEmployeeController;
 use App\Http\Controllers\PontoController;
 use App\Http\Controllers\Reports;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\UfController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Foundation\Application;
@@ -29,6 +30,8 @@ Route::get('/register',function(){
 });
 
 Route::middleware('auth')->group(function () {
+   Route::get('/usuarios',[UserController::class,'index'])->name('usuarios');
+   Route::post('/usuarios/add',[UserController::class,'store']);
    Route::get('/empresa',[BusinessController::class,'index'])->name('empresa');
    Route::get('/ufs',[UfController::class,'index'])->name('uf');
    Route::get('/funcionarios',[EmployeeController::class,'index'])->name('funcionarios');
@@ -60,11 +63,10 @@ Route::middleware('auth')->group(function () {
    Route::get('/relatorios/ponto/obra/pdf',[Reports::class,'pdfObra']);
    Route::get('/relatorios/ponto/individual/info',[Reports::class,'reportIndividual']);
    Route::get('/relatorios/ponto/individual/pdf',[Reports::class,'pdfIndividual']);
-   
    Route::get('/relatorios',function(){
     return Inertia::render('Reports/Main');
    })->name('relatorios');
-
+  
 
 
 });

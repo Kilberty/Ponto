@@ -30,22 +30,35 @@ import { useState } from 'react'
 import InputLabel from '@/Components/InputLabel'
 import TextInput from '@/Components/TextInput'
 import InputError from '@/Components/InputError'
+import Pagination from '@/Components/Pagination'
 
 export default function Roles () {
-    const { roles } = usePage().props
+    const { roles, filters } = usePage().props
     const [showModal, setShowModal] = useState(false)
     const [nome, setNome] = useState('')
     const [horas, setHoras] = useState('')
     const [editar, setEditar] = useState(false)
     const [idFuncao, setIdFuncao] = useState(0)
     const [errors, setErrors] = useState({})
-    const [filtroNome, setFiltroNome] = useState('')
+    const [filtroNome, setFiltroNome] = useState(filters?.nome || '')
 
     const aplicarFiltros = () => {
         router.visit(route('funcoes'), {
             method: 'get',
             data: {
                 nome: filtroNome
+            },
+            preserveScroll: true,
+            preserveState: true
+        })
+    }
+
+    const mudarPagina = (page) => {
+        router.visit(route('funcoes'), {
+            method: 'get',
+            data: {
+                ...filters,
+                page
             },
             preserveScroll: true,
             preserveState: true
@@ -62,21 +75,13 @@ export default function Roles () {
         domingo: false
     }
 
-    const [diasSemana, setDiasSemana] = useState({
-        segunda: true,
-        terca: true,
-        quarta: true,
-        quinta: true,
-        sexta: true,
-        sabado: false,
-        domingo: false
-    })
+    const [diasSemana, setDiasSemana] = useState(diasPadrao)
+
     const checkChange = (dia, checked) => {
         setDiasSemana(prev => ({ ...prev, [dia]: checked }))
     }
 
     const Salvar = async () => {
-        console.log(idFuncao)
         const error = {}
         if (!nome.trim()) {
             error.nome = 'Digite um nome.'
@@ -97,13 +102,11 @@ export default function Roles () {
                 onSuccess: () => {
                     setShowModal(false)
                     window.Swal.fire({
-                    title: 'Sucesso!',
-                    text: 'Função adicionada!',
-                    icon: 'success',
-                    confirmButtonText: 'Ok'
-                })
-                    
-                    
+                        title: 'Sucesso!',
+                        text: 'Função adicionada!',
+                        icon: 'success',
+                        confirmButtonText: 'Ok'
+                    })
                     setNome('')
                     setHoras('')
                     setDiasSemana(diasPadrao)
@@ -159,6 +162,7 @@ export default function Roles () {
             <div className='py-12'>
                 <div className='mx-auto max-w-7xl sm:px-6 lg:px-8'>
                     <div className='bg-white shadow-sm sm:rounded-lg p-6'>
+                        {/* Filtros */}
                         <form
                             onSubmit={e => {
                                 e.preventDefault()
@@ -185,6 +189,7 @@ export default function Roles () {
                             </div>
                         </form>
 
+                        {/* Tabela */}
                         <div className='overflow-x-auto'>
                             <Table>
                                 <TableHeader>
@@ -255,10 +260,17 @@ export default function Roles () {
                                 </TableBody>
                             </Table>
                         </div>
+
+                        {/* Paginação */}
+                        <Pagination
+                            links={roles.links}
+                            onPageChange={mudarPagina}
+                        />
                     </div>
                 </div>
             </div>
 
+            {/* Modal */}
             <Dialog
                 open={showModal}
                 onOpenChange={open => {
@@ -323,91 +335,26 @@ export default function Roles () {
                                 Dias da semana
                             </InputLabel>
                             <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2'>
-                                <div className='flex items-center gap-2 text-sm'>
-                                    <Checkbox
-                                        id='segunda'
-                                        checked={diasSemana.segunda}
-                                        onChange={e =>
-                                            checkChange(
-                                                'segunda',
-                                                e.target.checked
-                                            )
-                                        }
-                                    />
-                                    <span>Segunda</span>
-                                </div>
-                                <div className='flex items-center gap-2 text-sm'>
-                                    <Checkbox
-                                        checked={diasSemana.terca}
-                                        onChange={e =>
-                                            checkChange(
-                                                'terca',
-                                                e.target.checked
-                                            )
-                                        }
-                                    />
-                                    <span>Terça</span>
-                                </div>
-                                <div className='flex items-center gap-2 text-sm'>
-                                    <Checkbox
-                                        checked={diasSemana.quarta}
-                                        onChange={e =>
-                                            checkChange(
-                                                'quarta',
-                                                e.target.checked
-                                            )
-                                        }
-                                    />
-                                    <span>Quarta</span>
-                                </div>
-                                <div className='flex items-center gap-2 text-sm'>
-                                    <Checkbox
-                                        checked={diasSemana.quinta}
-                                        onChange={e =>
-                                            checkChange(
-                                                'quinta',
-                                                e.target.checked
-                                            )
-                                        }
-                                    />
-                                    <span>Quinta</span>
-                                </div>
-                                <div className='flex items-center gap-2 text-sm'>
-                                    <Checkbox
-                                        checked={diasSemana.sexta}
-                                        onChange={e =>
-                                            checkChange(
-                                                'sexta',
-                                                e.target.checked
-                                            )
-                                        }
-                                    />
-                                    <span>Sexta</span>
-                                </div>
-                                <div className='flex items-center gap-2 text-sm'>
-                                    <Checkbox
-                                        checked={diasSemana.sabado}
-                                        onChange={e =>
-                                            checkChange(
-                                                'sabado',
-                                                e.target.checked
-                                            )
-                                        }
-                                    />
-                                    <span>Sábado</span>
-                                </div>
-                                <div className='flex items-center gap-2 text-sm'>
-                                    <Checkbox
-                                        checked={diasSemana.domingo}
-                                        onChange={e =>
-                                            checkChange(
-                                                'domingo',
-                                                e.target.checked
-                                            )
-                                        }
-                                    />
-                                    <span>Domingo</span>
-                                </div>
+                                {Object.keys(diasSemana).map((dia) => (
+                                    <div
+                                        key={dia}
+                                        className='flex items-center gap-2 text-sm'
+                                    >
+                                        <Checkbox
+                                            checked={diasSemana[dia]}
+                                            onChange={e =>
+                                                checkChange(
+                                                    dia,
+                                                    e.target.checked
+                                                )
+                                            }
+                                        />
+                                        <span>
+                                            {dia.charAt(0).toUpperCase() +
+                                                dia.slice(1)}
+                                        </span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -421,7 +368,9 @@ export default function Roles () {
                                 <span className='hidden sm:inline'>Salvar</span>
                             </PrimaryButton>
 
-                            <DangerButton>
+                            <DangerButton
+                                onClick={() => setShowModal(false)}
+                            >
                                 <span className='sm:hidden'>
                                     <Trash size={20} />
                                 </span>

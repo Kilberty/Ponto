@@ -211,7 +211,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         </ResponsiveNavLink>
                         {openCadastros && (
                             <div className="sm:hidden bg-white px-4 py-2 space-y-1">
-                                <ResponsiveNavLink href="/cadastros/usuarios">
+                                <ResponsiveNavLink href="/usuarios">
                                     Usuários
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink
@@ -267,7 +267,7 @@ export default function AuthenticatedLayout({ header, children }) {
             {openCadastros && (
                 <div className="hidden sm:block border-b bg-white shadow">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-2 flex space-x-4">
-                        <NavLink href="/cadastros/usuarios">Usuários</NavLink>
+                        <NavLink href="/usuarios">Usuários</NavLink>
                         <NavLink
                             href="/funcoes"
                             active={route().current('funcoes')}
