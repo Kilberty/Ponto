@@ -257,7 +257,8 @@ export default function EmployeeList () {
                     setNome('')
                 }}
             >
-                <DialogContent className='w-full max-w-md md:max-w-3xl'>
+                <DialogContent 
+                className='w-full max-w-md md:max-w-3xl'>
                     <DialogHeader>
                         <DialogTitle>Cadastrar Funcionário</DialogTitle>
                         <DialogDescription>

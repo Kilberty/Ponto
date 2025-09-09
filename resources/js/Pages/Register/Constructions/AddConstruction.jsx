@@ -92,10 +92,12 @@ export default function AddConstruction({ children }) {
 
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open}  onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
 
-            <DialogContent className="w-full max-w-md md:max-w-3xl">
+            <DialogContent 
+            className="w-full max-w-md md:max-w-3xl"
+            >
                 <DialogHeader>
                     <DialogTitle>Obra</DialogTitle>
                     <DialogDescription>
