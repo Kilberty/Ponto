@@ -26,6 +26,19 @@ export default function Autocomplete({
     const inputRef = useRef(null)
     const suppressFocusRef = useRef(suppressAutoFocus)
 
+    // Detecta teclado e força scroll
+    useEffect(() => {
+        const handleResize = () => {
+            if (open && inputRef.current) {
+                // scroll input para o centro da tela
+                inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }
+        }
+
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [open])
+
     // Atualiza lista
     useEffect(() => {
         if (inputValue === '' && !forceShowAll) {
@@ -152,12 +165,6 @@ export default function Autocomplete({
                         setForceShowAll(false)
                         setOpen(true)
                         setHighlightedIndex(0)
-
-                        // Apenas filtra, não seleciona automaticamente
-                        const matches = data.filter(item =>
-                            item.label.toLowerCase().includes(lowerRaw)
-                        )
-
                         onChange?.(raw, null)
                     }}
                     onFocus={() => {
@@ -186,7 +193,13 @@ export default function Autocomplete({
             </div>
 
             {open && filteredOptions.length > 0 && (
-                <div className='absolute z-50 mt-1 w-full rounded-md border bg-white shadow-md max-h-60 overflow-y-auto'>
+                <div
+                    className='absolute z-50 mt-1 w-full rounded-md border bg-white shadow-md max-h-60 overflow-y-auto'
+                    style={{
+                        bottom: 'auto', // força o dropdown flutuar acima se necessário
+                        maxHeight: '50vh'
+                    }}
+                >
                     <Command>
                         <CommandEmpty>Nenhuma opção encontrada.</CommandEmpty>
                         <CommandGroup>
