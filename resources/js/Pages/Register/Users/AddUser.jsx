@@ -19,6 +19,10 @@ import { useState } from 'react'
 export default function AddUser ({ children }) {
     const [errors,setErrors] = useState({})
     const [open,setOpen] = useState(false)
+    const [name,setName] = useState("")
+    const [email,setEmail] = useState("")
+    const [password,setPassword] = useState("")
+    const [confirmedPassword,setConfirmedPassword] = useState("")
     const form = useForm({
         name:'',
         email:'',
@@ -34,23 +38,23 @@ export default function AddUser ({ children }) {
     const criarUsuario = () =>{
       const data = form.data
       const error = {}
-      if(!data.name){
+      if(!name){
         error.nome = 'Digite o nome do usuário.'
       }
 
-      if(!data.email) {
+      if(!email) {
         error.email = 'Digite o email do usuário.'
       }
       
-      if(!data.password) {
+      if(!password) {
         error.senha = 'Digite a senha do usuário.'
       }
       
-      if(!data.confirmedPassword){
+      if(!confirmedPassword){
         error.confirmacao = "Digite a senha do usuário."
       }
     
-      if(data.password != data.confirmedPassword){
+      if(password != confirmedPassword){
         error.igual = "Senhas não são iguais."
       }
     
@@ -60,8 +64,8 @@ export default function AddUser ({ children }) {
             return
        }
 
-       
-       form.post('/usuarios/add',{
+       const payload = {name,email,password,confirmedPassword}
+       router.post('/usuarios/add',payload,{
         onSuccess:()=>{
            Swal.fire({
                     title: 'Sucesso!',
@@ -80,8 +84,7 @@ export default function AddUser ({ children }) {
 
     }
     
-    
-    return (
+     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
 
@@ -99,8 +102,8 @@ export default function AddUser ({ children }) {
                         <TextInput 
                         className='w-full' 
                         name='name'
-                        value={form.data.name}
-                        onChange={handlechange}
+                        value={name}
+                        onChange={e=>setName(e.target.value)}
                         />
                         <InputError
                          message={errors.nome}
@@ -113,8 +116,8 @@ export default function AddUser ({ children }) {
                        <TextInput 
                        className='w-full'
                        name='email'
-                       value={form.data.email}
-                       onChange={handlechange}
+                       value={email}
+                       onChange={e=>setEmail(e.target.value)}
                        />
                        <InputError
                         message={errors.email}
@@ -128,8 +131,8 @@ export default function AddUser ({ children }) {
                        className='w-full' 
                        type='password' 
                        name='password'
-                       value={form.data.password}
-                       onChange={handlechange}
+                       value={password}
+                       onChange={e=>setPassword(e.target.value)}
                        />
                        <InputError
                         message={errors.senha}
@@ -147,8 +150,8 @@ export default function AddUser ({ children }) {
                     className='w-full' 
                     type='password'
                     name='confirmedPassword'
-                    value={form.data.confirmedPassword}
-                    onChange={handlechange} 
+                    value={confirmedPassword}
+                    onChange={e=>setConfirmedPassword(e.target.value)} 
                     />
                     <InputError
                      message={errors.confirmacao}
