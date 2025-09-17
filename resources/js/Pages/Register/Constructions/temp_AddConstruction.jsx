@@ -12,7 +12,7 @@ import {
     DialogFooter,
     DialogTrigger
 } from '@/Components/ui/dialog'
-import { router, useForm } from '@inertiajs/react'
+import { useForm } from '@inertiajs/react'
 import { Save, Search, Trash } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import api from '@/api'
@@ -20,38 +20,43 @@ import { consultarCep } from '@/utils' // <-- IMPORTANTE
 import mask from '@/mask'
 
 export default function AddConstruction ({ children }) {
+    const form = useForm({
+        nome: '',
+        cep: '',
+        endereco: '',
+        numero: '',
+        bairro: '',
+        cidade: '',
+        uf: ''
+    })
 
-
-    const [nome, setNome] = useState('')
-    const [cep, setCep] = useState('')
-    const [endereco, setEndereco] = useState('')
-    const [numero, setNumero] = useState('')
-    const [bairro, setBairro] = useState('')
-    const [cidade, setCidade] = useState('')
-    const [uf, setUf] = useState('')
     const [ufs, setUfs] = useState([])
     const [errors, setErrors] = useState({})
     const [open, setOpen] = useState(false)
-
     useEffect(() => {
         api.get('/ufs').then(res => {
             setUfs(res.data)
         })
-    }, [])
+    }, [ufs])
+
+   const handleChange = (e)=> {
+        const {name,value} = e.target
+        form.setData(prev => ({ ...prev, [name]: value }))
+    }
 
     const salvar = () => {
         const error = {}
 
-        if (!nome) {
-            error.nome = 'Nome da obra é obrigatório.'
+        if (!form.data.nome) {
+            error.nome = 'Nome da obra Ã© obrigatÃ³rio.'
         }
 
         if (Object.keys(error).length > 0) {
             setErrors(error)
             return
         }
-        const payload = { nome, cep, endereco, numero, bairro, cidade, uf }
-        router.post('/obras/add', payload, {
+
+        form.post('/obras/add', {
             onSuccess: () => {
                 setOpen(false)
                 window.Swal.fire({
@@ -65,15 +70,12 @@ export default function AddConstruction ({ children }) {
     }
 
     const buscarCep = async () => {
-        const data = await consultarCep(cep, ufs)
-
+        const data = await consultarCep(form.data.cep, ufs)
         if (data) {
-            setEndereco(data.endereco || '')
-            setBairro(data.bairro || '')
-            setCidade(data.cidade || '')
-            setUf(data.uf || '')
+            form.setData(prev => ({ ...prev, ...data }))
         }
     }
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
@@ -82,7 +84,7 @@ export default function AddConstruction ({ children }) {
                 <DialogHeader>
                     <DialogTitle>Obra</DialogTitle>
                     <DialogDescription>
-                        Adicione as informações da obra.
+                        Adicione as informaÃ§Ãµes da obra.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -91,10 +93,9 @@ export default function AddConstruction ({ children }) {
                         <InputLabel>Nome</InputLabel>
                         <TextInput
                             className='w-full'
-                            onChange={e => {
-                                setNome(e.target.value)
-                            }}
-                            value={nome}
+                            name='nome'
+                            onChange={handleChange}
+                            value={form.data.nome}
                         />
                     </div>
 
@@ -105,10 +106,10 @@ export default function AddConstruction ({ children }) {
                                 className='w-full'
                                 name='cep'
                                 onChange={e => {
-                                    const value = mask.unmask(e.target.value) // remove máscara
-                                    setCep(value) // <-- só um argumento
+                                    const value = mask.unmask(e.target.value)
+                                    form.setData('cep', value)
                                 }}
-                                value={mask.cep(cep)} // aplica máscara apenas na exibição
+                                value={mask.cep(form.data.cep)}
                             />
                             <PrimaryButton
                                 className='px-3 py-2'
@@ -120,26 +121,22 @@ export default function AddConstruction ({ children }) {
                     </div>
 
                     <div className='hidden sm:block md:col-span-7'>
-                        <InputLabel>Endereço</InputLabel>
+                        <InputLabel>EndereÃ§o</InputLabel>
                         <TextInput
                             className='w-full'
                             name='endereco'
-                            onChange={e => {
-                                setEndereco(e.target.value)
-                            }}
-                            value={endereco}
+                            onChange={handleChange}
+                            value={form.data.endereco}
                         />
                     </div>
 
                     <div className='hidden sm:block md:col-span-2'>
-                        <InputLabel>Número</InputLabel>
+                        <InputLabel>NÃºmero</InputLabel>
                         <TextInput
                             className='w-full'
                             name='numero'
-                            onChange={e => {
-                                setNumero(e.target.value)
-                            }}
-                            value={numero}
+                            onChange={handleChange}
+                            value={form.data.numero}
                         />
                     </div>
 
@@ -148,18 +145,18 @@ export default function AddConstruction ({ children }) {
                         <TextInput
                             className='w-full'
                             name='bairro'
-                            onChange={e => setBairro(e.target.value)}
-                            value={bairro}
+                            onChange={handleChange}
+                            value={form.data.bairro}
                         />
                     </div>
 
                     <div className='col-span-9 md:col-span-6'>
-                        <InputLabel>Município</InputLabel>
+                        <InputLabel>MunicÃ­pio</InputLabel>
                         <TextInput
                             className='w-full'
                             name='cidade'
-                            onChange={e => setCidade(e.target.value)}
-                            value={cidade}
+                            onChange={handleChange}
+                            value={form.data.cidade}
                         />
                     </div>
 
@@ -167,30 +164,30 @@ export default function AddConstruction ({ children }) {
                         <InputLabel>UF</InputLabel>
                         <Autocomplete
                             data={ufs}
-                            value={uf} // usa o estado correto
+                            value={form.data.uf}
                             onChange={(value, item) => {
-                                setUf(value || '') // apenas um argumento
+                                form.setData('uf', value || '')
                             }}
                         />
                     </div>
 
                     <div className='col-span-9 md:hidden'>
-                        <InputLabel>Endereço</InputLabel>
+                        <InputLabel>EndereÃ§o</InputLabel>
                         <TextInput
                             className='w-full'
                             name='endereco'
-                            onChange={e => setEndereco(e.target.value)}
-                            value={endereco}
+                            onChange={handleChange}
+                            value={form.data.endereco}
                         />
                     </div>
 
                     <div className='col-span-3 md:hidden'>
-                        <InputLabel>Número</InputLabel>
+                        <InputLabel>NÃºmero</InputLabel>
                         <TextInput
                             className='w-full'
                             name='numero'
-                            onChange={e => setNumero(e.target.value)}
-                            value={numero}
+                            onChange={handleChange}
+                            value={form.data.numero}
                         />
                     </div>
                 </div>
