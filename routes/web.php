@@ -29,6 +29,13 @@ Route::get('/register',function(){
     return Inertia::render('Auth/Register',[]);
 });
 
+
+
+Route::post('/ponto/add',[PontoController::class,'store']);
+
+
+
+
 Route::middleware('auth')->group(function () {
    Route::get('/usuarios',[UserController::class,'index'])->name('usuarios');
    Route::post('/usuarios/add',[UserController::class,'store']);
@@ -53,7 +60,7 @@ Route::middleware('auth')->group(function () {
    Route::patch('/obras/{construction}/descricao',[ConstructionController::class,'description']);
    Route::get('/obras/{construction}/descricao',[ConstructionController::class,'show']);
    Route::get('/obras/autocomplete',[ConstructionController::class,'autoCompleteConstruction']);
-   Route::post('/ponto/add',[PontoController::class,'store']);
+  
    Route::get('/ponto/getHorario',[PontoController::class,'buscarHorario']);
    Route::get('/ponto/autocomplete',[PontoController::class,'autocompleteStatus']);
    Route::post('/ponto/ajuste',[PontoController::class,'ajustarPonto']);
