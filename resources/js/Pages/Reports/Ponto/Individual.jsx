@@ -233,7 +233,7 @@ export default function Individual() {
                                                 </TableCell>
                                             </TableRow>
                                         ))}
-                                    </TableBody>
+                                    </TableBody> 
                                 </Table>
 
                                 <Pagination
