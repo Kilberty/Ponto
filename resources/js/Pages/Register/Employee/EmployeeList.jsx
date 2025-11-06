@@ -56,6 +56,7 @@ export default function EmployeeList () {
                 })
                 setNome('')
                 setCodigo('')
+                setFuncao('')
             }
         })
     }
