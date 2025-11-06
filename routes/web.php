@@ -32,6 +32,7 @@ Route::get('/register',function(){
 
 
 Route::post('/ponto/add',[PontoController::class,'store']);
+Route::get('/ponto/{construction}',[PontoController::class,'index'])->name('ponto');
 
 
 
@@ -65,7 +66,7 @@ Route::middleware('auth')->group(function () {
    Route::get('/ponto/autocomplete',[PontoController::class,'autocompleteStatus']);
    Route::post('/ponto/ajuste',[PontoController::class,'ajustarPonto']);
    Route::post('/ponto/ajusteHorario/{ponto}',[PontoController::class,'updateHorario']);
-   Route::get('/ponto/{construction}',[PontoController::class,'index'])->name('ponto');
+  
    Route::get('/relatorios/ponto/individual',[Reports::class,'PontoIndividual']);
    Route::get('/relatorios/ponto/obra/pdf',[Reports::class,'pdfObra']);
    Route::get('/relatorios/ponto/individual/info',[Reports::class,'reportIndividual']);

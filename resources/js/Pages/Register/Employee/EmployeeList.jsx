@@ -37,6 +37,8 @@ export default function EmployeeList () {
 
     const [showModal, setShowModal] = useState(false)
     const [nome_funcoes, setNomeFuncoes] = useState([])
+    const [obras_nome,setObrasNome] = useState([])
+    const [obra,setObra] = useState([])
     const [nome, setNome] = useState('')
     const [codigo, setCodigo] = useState('')
     const [funcao, setFuncao] = useState(0)
@@ -44,7 +46,7 @@ export default function EmployeeList () {
     const [filtroCodigo, setFiltroCodigo] = useState(filters?.codigo || '')
 
     const salvar = () => {
-        const payload = { nome, codigo, funcao }
+        const payload = { nome, codigo, funcao,obra }
         router.post('/funcionarios/adicionar', payload, {
             onSuccess: () => {
                 setShowModal(false)
@@ -82,6 +84,10 @@ export default function EmployeeList () {
     useEffect(() => {
         api.get('/funcoes/autocomplete').then(res => {
             setNomeFuncoes(res.data)
+        })
+
+        api.get('/obras/autocomplete').then(res=>{
+             setObrasNome(res.data)
         })
     }, [])
 
@@ -268,7 +274,7 @@ export default function EmployeeList () {
                     </DialogHeader>
 
                     <div className='grid grid-cols-1 md:grid-cols-12 gap-4'>
-                        <div className='md:col-span-5'>
+                        <div className='md:col-span-12'>
                             <InputLabel>Nome: </InputLabel>
                             <TextInput
                                 className='w-full'
@@ -276,6 +282,20 @@ export default function EmployeeList () {
                                 onChange={e => setNome(e.target.value)}
                             />
                         </div>
+                        
+                          <div className='md:col-span-5'>
+                            <InputLabel>Obra: </InputLabel>
+                            <Autocomplete
+                                data={obras_nome}
+                                value={obra}
+                                onChange={value => setObra(value)}
+                            />
+                        </div>
+                        
+                        
+                        
+                        
+                        
                         <div className='md:col-span-3'>
                             <InputLabel>Função: </InputLabel>
                             <Autocomplete

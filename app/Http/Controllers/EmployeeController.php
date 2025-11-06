@@ -38,7 +38,12 @@ class EmployeeController extends Controller
     {
         $dados = $request->all();
         $dados["empresa_id"] = Auth::user()->empresa_id;
-        Employee::create($dados);
+        $funcionario = Employee::create($dados);
+        $payload = [
+            "funcionario_id"=> $funcionario->id,
+            "construcao_id"=> $dados['obra']
+        ];
+        $construction = ConstructionEmployee::create($payload);
         return redirect()->route('funcionarios');
     }
 
