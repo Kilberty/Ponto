@@ -1,9 +1,11 @@
+import { forwardRef } from 'react'
 import { cn } from '@/lib/utils' // ou use clsx se preferir
 
-export default function FakeNavLink({ active = false, className = '', children, ...props }) {
+const FakeNavLink = forwardRef(({ active = false, className = '', children, ...props }, ref) => {
     return (
         <button
             type="button"
+            ref={ref}
             {...props}
             className={cn(
                 'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out',
@@ -16,4 +18,8 @@ export default function FakeNavLink({ active = false, className = '', children, 
             {children}
         </button>
     )
-}
+})
+
+FakeNavLink.displayName = 'FakeNavLink'
+
+export default FakeNavLink
