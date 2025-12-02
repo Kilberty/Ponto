@@ -29,16 +29,8 @@ Route::get('/register',function(){
     return Inertia::render('Auth/Register',[]);
 });
 
-
-
-Route::post('/ponto/add',[PontoController::class,'store']);
-Route::get('/ponto/{construction}',[PontoController::class,'index'])->name('ponto');
-
-
-
-
-
 Route::middleware('auth')->group(function () {
+  
    Route::get('/usuarios',[UserController::class,'index'])->name('usuarios');
    Route::post('/usuarios/add',[UserController::class,'store']);
    Route::get('/empresa',[BusinessController::class,'index'])->name('empresa');
@@ -62,14 +54,11 @@ Route::middleware('auth')->group(function () {
    Route::patch('/obras/{construction}/descricao',[ConstructionController::class,'description']);
    Route::get('/obras/{construction}/descricao',[ConstructionController::class,'show']);
    Route::get('/obras/autocomplete',[ConstructionController::class,'autoCompleteConstruction']);
-  
-   // Rotas específicas de ponto devem vir ANTES da rota dinâmica
    Route::get('/ponto/getHorario',[PontoController::class,'buscarHorario']);
-   Route::get('/ponto/autocomplete',[PontoController::class,'autocompleteStatus']);
    Route::post('/ponto/ajuste',[PontoController::class,'ajustarPonto']);
-   Route::post('/ponto/ajusteHorario/{ponto}',[PontoController::class,'updateHorario']);
-   // Rota dinâmica por último
-  
+   Route::get('/ponto/autocomplete',[PontoController::class,'autocompleteStatus']);
+
+   Route::post('/ponto/ajusteHorario/{ponto}',[PontoController::class,'updateHorario']);  
    Route::get('/relatorios/ponto/individual',[Reports::class,'PontoIndividual']);
    Route::get('/relatorios/ponto/obra/pdf',[Reports::class,'pdfObra']);
    Route::get('/relatorios/ponto/individual/info',[Reports::class,'reportIndividual']);
@@ -81,5 +70,14 @@ Route::middleware('auth')->group(function () {
 
 
 });
+
+
+Route::post('/ponto/add',[PontoController::class,'store']);
+
+Route::get('/ponto/{construction}',[PontoController::class,'index'])->name('ponto');
+
+
+
+
 
 require __DIR__.'/auth.php';

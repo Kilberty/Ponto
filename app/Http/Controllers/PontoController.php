@@ -24,7 +24,7 @@ class PontoController extends Controller
     
     
     public function autocompleteStatus(){
-        $enum_values = ['Atestado', 'Falta', 'Férias','Horário'];
+        $enum_values = ['Atestado','Falta','Férias','Horário'];
         $formatted_values = collect($enum_values)->map(function ($value) {
         return [
               'value' => $value,
