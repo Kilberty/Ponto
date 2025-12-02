@@ -32,6 +32,8 @@ Route::get('/register',function(){
 
 
 Route::post('/ponto/add',[PontoController::class,'store']);
+Route::get('/ponto/{construction}',[PontoController::class,'index'])->name('ponto');
+
 
 
 
@@ -67,7 +69,6 @@ Route::middleware('auth')->group(function () {
    Route::post('/ponto/ajuste',[PontoController::class,'ajustarPonto']);
    Route::post('/ponto/ajusteHorario/{ponto}',[PontoController::class,'updateHorario']);
    // Rota dinâmica por último
-   Route::get('/ponto/{construction}',[PontoController::class,'index'])->name('ponto');
   
    Route::get('/relatorios/ponto/individual',[Reports::class,'PontoIndividual']);
    Route::get('/relatorios/ponto/obra/pdf',[Reports::class,'pdfObra']);
