@@ -42,7 +42,9 @@ export default function Fix ({ children }) {
 
     const handleChangeHoras = e => {
         const { name, value } = e.target
-        setHoras(prev => ({ ...prev, [name]: mask.hora(value) }))
+        console.log(name)
+        console.log(value)
+        setHoras(prev => ({ ...prev, [name]: value }))
     }
 
     const validarHora = hora => {
@@ -67,7 +69,8 @@ export default function Fix ({ children }) {
             retorno: horas.retorno,
             saida: horas.saida
         }
-
+         
+        console.log(payload)
         if (!Number.isInteger(funcionarioID)) {
             error.funcionario = 'Selecione um funcionário válido.'
         }

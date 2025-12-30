@@ -20,7 +20,6 @@ export default forwardRef(function TextInput(
     <input
       {...props}
       type={type}
-      name="nope"                  // nome aleatório para evitar autofill
       autoComplete="new-password"  // evita sugestões de senha/autofill
       autoCorrect="off"
       autoCapitalize="off"
