@@ -50,7 +50,7 @@ export default function Ponto() {
                 `,
                 icon: 'success',
                 showConfirmButton: true, // Oculta o botão 'OK'
-                timer: 3000, // Fecha o alerta após 5 segundos (5000 milissegundos)
+                timer: 5000, // Fecha o alerta após 5 segundos (5000 milissegundos)
                 willClose: () => {
                     setCodigo('');
                     inputRef.current?.focus();
